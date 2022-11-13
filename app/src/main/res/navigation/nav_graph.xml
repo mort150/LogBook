@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.logbook.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_pictureDetailFragment"
+            app:destination="@id/pictureDetailFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_addPictureFragment"
+            app:destination="@id/addPictureFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pictureDetailFragment"
+        android:name="com.example.logbook.PictureDetailFragment"
+        android:label="fragment_picture_detail"
+        tools:layout="@layout/fragment_picture_detail" >
+        <action
+            android:id="@+id/action_pictureDetailFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPictureFragment"
+        android:name="com.example.logbook.AddPictureFragment"
+        android:label="fragment_add_picture"
+        tools:layout="@layout/fragment_add_picture" >
+        <action
+            android:id="@+id/action_addPictureFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+</navigation>
