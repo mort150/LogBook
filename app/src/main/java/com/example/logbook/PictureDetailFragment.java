@@ -3,62 +3,88 @@ package com.example.logbook;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.room.Room;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PictureDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.logbook.database.InitDatabase;
+import com.example.logbook.database.PictureEntity;
+import com.example.logbook.databinding.FragmentPictureDetailBinding;
+
+import java.util.List;
+
 public class PictureDetailFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public PictureDetailFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PictureDetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PictureDetailFragment newInstance(String param1, String param2) {
-        PictureDetailFragment fragment = new PictureDetailFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private FragmentPictureDetailBinding binding;
+    private int pictureId;
+    private InitDatabase db;
+    private PictureEntity pictureEntity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        db = Room.databaseBuilder(requireContext(), InitDatabase.class, "logbook.db").allowMainThreadQueries().build();
+        pictureId = requireArguments().getInt("pictureId");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_picture_detail, container, false);
+        binding = FragmentPictureDetailBinding.inflate(inflater, container, false);
+        db.pictureDao().getAllData().observe(getViewLifecycleOwner(), pictureEntities -> {
+
+            for (PictureEntity picture : pictureEntities
+            ) {
+                if (picture.pictureId == pictureId) {
+                    loadImage(picture);
+                    break;
+                }
+            }
+            binding.previousBtn.setOnClickListener(view -> previousPic(pictureEntities, pictureId));
+
+            binding.nextBtn.setOnClickListener(view -> nextPic(pictureEntities, pictureId));
+        });
+
+        return binding.getRoot();
+    }
+
+    public void previousPic(List<PictureEntity> pictures, int pictureId) {
+        int position = 0;
+        for (int i = 0; i < pictures.size(); i++) {
+            if (pictures.get(i).pictureId == pictureId) {
+                position = i;
+                break;
+            }
+        }
+        position--;
+        if (position < 0) {
+            position = pictures.size() - 1;
+        }
+        loadImage(pictures.get(position));
+    }
+
+    public void nextPic(List<PictureEntity> pictures, int pictureId) {
+        int position = 0;
+        for (int i = 0; i < pictures.size(); i++) {
+            if (pictures.get(i).pictureId == pictureId) {
+                position = i;
+                break;
+            }
+        }
+        position++;
+        if (position > pictures.size() - 1) {
+            position = 0;
+        }
+        loadImage(pictures.get(position));
+    }
+
+    public void loadImage(PictureEntity pictureEntity) {
+        this.pictureId = pictureEntity.pictureId;
+        ImageDownloaderTask imageDownloaderTask = new ImageDownloaderTask();
+        imageDownloaderTask.setOnPostExecute(bitmap -> {
+            binding.iamgeDetail.setImageBitmap(bitmap);
+        });
+        imageDownloaderTask.execute(pictureEntity.url);
     }
 }

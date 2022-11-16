@@ -27,5 +27,15 @@ public interface PictureDAO {
     @Query("DELETE FROM picture")
     void deleteAllPicture();
 
+    @Query("SELECT * FROM picture WHERE pictureId < :pictureId ORDER BY pictureId DESC LIMIT 1")
+    LiveData<PictureEntity> getPreviousPic(int pictureId);
 
+    @Query("SELECT * FROM picture WHERE pictureId > :pictureId ORDER BY pictureId ASC LIMIT 1")
+    LiveData<PictureEntity> getNextPic(int pictureId);
+
+    @Query("SELECT * FROM picture ORDER BY pictureId ASC LIMIT 1")
+    PictureEntity getFirstPic();
+
+    @Query("SELECT * FROM picture ORDER BY pictureId DESC LIMIT 1")
+    PictureEntity getLastPic();
 }

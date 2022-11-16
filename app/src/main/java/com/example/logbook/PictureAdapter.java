@@ -1,6 +1,5 @@
 package com.example.logbook;
 
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,28 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.logbook.database.PictureEntity;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
     public interface OnClickListener {
-        public void OnClick(View view, int position);
+        void OnClick(View view, int position);
     }
 
     public PictureAdapter(List<PictureEntity> pictures) {
         this.pictures = pictures;
     }
 
-    private List<PictureEntity> pictures;
-
-    public List<PictureEntity> getPictures() {
-        return pictures;
-    }
-
-    public void setPictures(List<PictureEntity> pictures) {
-        this.pictures = pictures;
-    }
+    private final List<PictureEntity> pictures;
 
     public PictureAdapter.OnClickListener onClickListener;
 
