@@ -1,8 +1,10 @@
 package com.example.logbook;
 
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.logbook.database.PictureEntity;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
@@ -37,14 +41,19 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         this.onClickListener = onClickListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView pictureName;
         public TextView description;
+        public TextView date;
+        public ImageView imageView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             pictureName = itemView.findViewById(R.id.pictureName);
             description = itemView.findViewById(R.id.description);
+            date = itemView.findViewById(R.id.date);
+            imageView = itemView.findViewById(R.id.imageView);
             itemView.setOnClickListener(this);
         }
 
@@ -63,8 +72,17 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull PictureAdapter.ViewHolder holder, int position) {
+
+        ImageDownloaderTask imageDownloaderTask = new ImageDownloaderTask();
+        imageDownloaderTask.setOnPostExecute(result -> {
+            holder.imageView.setImageBitmap(result);
+        });
+
+        imageDownloaderTask.execute(pictures.get(position).url);
+
         holder.pictureName.setText(pictures.get(position).name);
-        holder.description.setText("Created at: " + pictures.get(position).create_at);
+        holder.date.setText("Created at: " + pictures.get(position).create_at);
+        holder.description.setText("Description: " + pictures.get(position).description);
     }
 
     @Override
