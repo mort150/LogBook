@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.example.logbook.database.InitDatabase;
 import com.example.logbook.database.PictureEntity;
 import com.example.logbook.databinding.FragmentAddPictureBinding;
-import com.example.logbook.tools.InputTool;
+import com.example.logbook.Helper.InputTool;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +25,7 @@ public class AddPictureFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         db = Room.databaseBuilder(requireContext(), InitDatabase.class, "logbook.db").allowMainThreadQueries().build();
         requireActivity().setTitle("Add Picture");
     }

@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.example.logbook.database.InitDatabase;
 import com.example.logbook.databinding.FragmentMainBinding;
-import com.example.logbook.tools.AlertDialogTool;
+import com.example.logbook.Helper.AlertDialogTool;
 
 public class MainFragment extends Fragment {
     private FragmentMainBinding binding;
@@ -25,7 +25,9 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        db = Room.databaseBuilder(requireContext(), InitDatabase.class, "logbook.db").allowMainThreadQueries().build();
+
+        db = Room.databaseBuilder(requireContext(), InitDatabase.class, "logbook.db")
+                .allowMainThreadQueries().build();
         requireActivity().setTitle("Pictures list");
     }
 
@@ -35,27 +37,27 @@ public class MainFragment extends Fragment {
         binding = FragmentMainBinding.inflate(inflater, container, false);
 
         db.pictureDao().getAllData().observe(getViewLifecycleOwner(),pictures -> {
-            PictureAdapter adapter = new PictureAdapter(pictures);
-            adapter.setOnClickListener(((view, position) -> {
+            PictureAdapter pictureAdapter = new PictureAdapter(pictures);
+
+            pictureAdapter.setOnClickListener(((view, position) -> {
                 Bundle bundle = new Bundle();
                 bundle.putInt("pictureId",pictures.get(position).pictureId);
                 NavHostFragment.findNavController(this).navigate(R.id.action_mainFragment_to_pictureDetailFragment,bundle);
             }));
-            binding.recyclerView.setAdapter(adapter);
+
+            binding.recyclerView.setAdapter(pictureAdapter);
             binding.recyclerView.setLayoutManager((new LinearLayoutManager(requireContext())));
-            binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(),
-                    RecyclerView.VERTICAL));
+            binding.recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), RecyclerView.VERTICAL));
         });
-        binding.delFab.setOnClickListener(view -> {
-            AlertDialogTool.showConfirmDialog(requireContext(),"Do you want to delete all pictures here?","Confirm",
-                    (dialog, which) -> {
-                        db.pictureDao().deleteAllPicture();
-                        Toast.makeText(requireContext(),"Delete all pictures successfully!",Toast.LENGTH_SHORT).show();
-                    },
-                    (dialog, which) -> {
-                        dialog.dismiss();
-                    });
-        });
+        binding.delFab.setOnClickListener(view -> AlertDialogTool.showConfirmDialog(requireContext(),
+                "Do you want to delete all pictures here?","Confirm",
+                (dialog, which) -> {
+                    db.pictureDao().deleteAllPicture();
+                    Toast.makeText(requireContext(),"Delete all pictures successfully!",Toast.LENGTH_SHORT).show();
+                },
+                (dialog, which) -> {
+                    dialog.dismiss();
+                }));
 
         binding.addFab.setOnClickListener(view -> {
             NavHostFragment.findNavController(this).navigate(R.id.action_mainFragment_to_addPictureFragment);

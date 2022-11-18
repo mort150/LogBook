@@ -61,6 +61,7 @@ public class PictureDetailFragment extends Fragment {
         if (position < 0) {
             position = pictures.size() - 1;
         }
+
         loadImage(pictures.get(position));
     }
 
@@ -76,15 +77,16 @@ public class PictureDetailFragment extends Fragment {
         if (position > pictures.size() - 1) {
             position = 0;
         }
+
         loadImage(pictures.get(position));
     }
 
     public void loadImage(PictureEntity pictureEntity) {
         this.pictureId = pictureEntity.pictureId;
-        ImageDownloaderTask imageDownloaderTask = new ImageDownloaderTask();
-        imageDownloaderTask.setOnPostExecute(bitmap -> {
+        PictureDownloader pictureDownloader = new PictureDownloader();
+        pictureDownloader.setExecute(bitmap -> {
             binding.iamgeDetail.setImageBitmap(bitmap);
         });
-        imageDownloaderTask.execute(pictureEntity.url);
+        pictureDownloader.execute(pictureEntity.url);
     }
 }

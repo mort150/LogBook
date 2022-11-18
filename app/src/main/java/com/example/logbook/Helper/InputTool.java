@@ -1,4 +1,4 @@
-package com.example.logbook.tools;
+package com.example.logbook.Helper;
 
 import android.widget.EditText;
 
@@ -10,9 +10,11 @@ public class InputTool {
             for (EditText editText : editTexts) {
                 if (editText.getText().toString().isEmpty()) {
                     editText.setError("Invalid input. Please enter again!!!");
+
                     return false;
                 }
             }
+
             return true;
         }
     }

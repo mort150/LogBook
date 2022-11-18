@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 
 import java.io.InputStream;
 
-public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
+public class PictureDownloader extends AsyncTask<String, Void, Bitmap> {
 
     public interface OnResult {
         void onListen(Bitmap result);
@@ -19,24 +19,23 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         resultListener.onListen(result);
     }
 
-    public void setOnPostExecute(OnResult onResult) {
-        this.resultListener = onResult;
-    }
-
     @Override
     protected Bitmap doInBackground(String... URL) {
-
         String pictureURL = URL[0];
         Bitmap bitmap = null;
         try {
-            InputStream input = new java.net.URL(pictureURL).openStream();
-            bitmap = BitmapFactory.decodeStream(input);
+            InputStream inputStream = new java.net.URL(pictureURL).openStream();
+            bitmap = BitmapFactory.decodeStream(inputStream);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return bitmap;
+    }
+
+    public void setExecute(OnResult onResult) {
+        this.resultListener = onResult;
     }
 }
 

@@ -39,10 +39,12 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
             pictureName = itemView.findViewById(R.id.pictureName);
             description = itemView.findViewById(R.id.description);
             date = itemView.findViewById(R.id.date);
             imageView = itemView.findViewById(R.id.imageView);
+
             itemView.setOnClickListener(this);
         }
 
@@ -62,12 +64,9 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull PictureAdapter.ViewHolder holder, int position) {
 
-        ImageDownloaderTask imageDownloaderTask = new ImageDownloaderTask();
-        imageDownloaderTask.setOnPostExecute(result -> {
-            holder.imageView.setImageBitmap(result);
-        });
-
-        imageDownloaderTask.execute(pictures.get(position).url);
+        PictureDownloader pictureDownloader = new PictureDownloader();
+        pictureDownloader.setExecute(result -> holder.imageView.setImageBitmap(result));
+        pictureDownloader.execute(pictures.get(position).url);
 
         holder.pictureName.setText(pictures.get(position).name);
         holder.date.setText("Created at: " + pictures.get(position).create_at);
